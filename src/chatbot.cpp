@@ -30,6 +30,9 @@ ChatBot::ChatBot(std::string filename)
     _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
 }
 
+// RULE OF FIVE implementation below
+
+// 1: destructor
 ChatBot::~ChatBot()
 {
     std::cout << "ChatBot Destructor" << std::endl;
@@ -44,6 +47,88 @@ ChatBot::~ChatBot()
 
 //// STUDENT CODE
 ////
+
+// 2: copy constructor
+ChatBot::ChatBot(const ChatBot &source) 
+{
+    std::cout << "ChatBot Copy Constructor" << std::endl;
+
+    // Allocate memory on te heap for copy of source object's owned data
+    _image = new wxBitmap;
+    // Deep copy of source object's data into new object's data
+    *_image = *source._image;
+    // Copy the rest of member data from source into new object
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    // Call method to update chatbot handle in ChatLogic object
+    _chatLogic->SetChatbotHandle(this);
+}
+
+// 3: copy assignment operator
+ChatBot& ChatBot::operator=(const ChatBot &source)
+{
+    std::cout << "ChatBot Copy Assignment Operator" << std::endl;
+    
+    // Protection against self assignment
+    if (this == &source) { return *this; }    
+    // Remove old image data from heap
+    delete _image;
+    // Allocate memory on te heap for copy of source object's owned data
+    _image = new wxBitmap;
+    // Deep copy of source object's data into new object's data
+    *_image = *source._image;
+    // Copy the rest of member data from source into new object
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    // Call method to update chatbot handle in ChatLogic object
+    _chatLogic->SetChatbotHandle(this);
+
+    return *this;
+}
+
+// 4: move constructor
+ChatBot::ChatBot(ChatBot &&source) // 4: move constructor
+{
+    std::cout << "ChatBot Move Constructor" << std::endl;
+    
+    // Copy the member data from source into new object
+    _image = source._image;
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+    // Invalidate all source data
+    source._image = nullptr;
+    source._currentNode = nullptr;
+    source._rootNode = nullptr;
+    source._chatLogic = nullptr;
+}
+
+// 5: move assignment operator
+ChatBot& ChatBot::operator=(ChatBot &&source) 
+{
+    std::cout << "ChatBot Move Assignment Operator" << std::endl;
+    
+    // Protection against self assignment
+    if (this == &source) { return *this; }
+    // Remove old image data from heap
+    delete _image;
+    // Copy the member data from source into new object
+    _image = source._image;
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+    // Invalidate all source data
+    source._image = nullptr;
+    source._currentNode = nullptr;
+    source._rootNode = nullptr;
+    source._chatLogic = nullptr;
+
+    return *this;
+}
 
 ////
 //// EOF STUDENT CODE
