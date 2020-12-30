@@ -27,22 +27,23 @@ void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
 
 void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
 {
-    // unse move semantics on GraphEdge object since push_back() would copy normally
+    // use move semantics on GraphEdge object since push_back() would copy normally
     _childEdges.push_back(std::move(edge));
 }
 
 //// STUDENT CODE
 ////
-void GraphNode::MoveChatbotHere(ChatBot *chatbot)
+void GraphNode::MoveChatbotHere(ChatBot chatbot)
 {
-    _chatBot = chatbot;
-    _chatBot->SetCurrentNode(this);
+    // use move semantics on ChatBot object to ensure move assignment operator used
+    _chatBot = std::move(chatbot);
+    _chatBot.SetCurrentNode(this);
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 {
-    newNode->MoveChatbotHere(_chatBot);
-    _chatBot = nullptr; // invalidate pointer at source
+    // use move semantics on ChatBot object to pass into function
+    newNode->MoveChatbotHere(std::move(_chatBot));
 }
 ////
 //// EOF STUDENT CODE
