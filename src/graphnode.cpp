@@ -8,11 +8,7 @@ GraphNode::GraphNode(int id)
 
 GraphNode::~GraphNode()
 {
-    //// STUDENT CODE
-    ////
 
-    ////
-    //// EOF STUDENT CODE
 }
 
 void GraphNode::AddToken(std::string token)
@@ -31,8 +27,6 @@ void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
     _childEdges.push_back(std::move(edge));
 }
 
-//// STUDENT CODE
-////
 void GraphNode::MoveChatbotHere(ChatBot chatbot)
 {
     // use move semantics on ChatBot object to ensure move assignment operator used
@@ -45,16 +39,9 @@ void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
     // use move semantics on ChatBot object to pass into function
     newNode->MoveChatbotHere(std::move(_chatBot));
 }
-////
-//// EOF STUDENT CODE
 
 GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
 {
-    //// STUDENT CODE
-    ////
     // use get() method of unique pointer to return raw pointer
     return _childEdges[index].get();
-
-    ////
-    //// EOF STUDENT CODE
 }

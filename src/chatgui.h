@@ -13,16 +13,10 @@ private:
     // control elements
     wxBoxSizer *_dialogSizer;
     wxBitmap _image;
-
-    //// STUDENT CODE
-    ////
     
     // Create unique pointer on the stack, exclusively controlled by ChatBotPanelDialog class
     // Do declaration and initilization in one step
     std::unique_ptr<ChatLogic> _chatLogic = std::make_unique<ChatLogic>();
-
-    ////
-    //// EOF STUDENT CODE
 
 public:
     // constructor / destructor
