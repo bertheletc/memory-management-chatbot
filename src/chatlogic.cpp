@@ -5,6 +5,7 @@
 #include <iterator>
 #include <tuple>
 #include <algorithm>
+#include <memory>
 
 #include "graphedge.h"
 #include "graphnode.h"
@@ -34,12 +35,6 @@ ChatLogic::~ChatLogic()
 
     // delete chatbot instance
     delete _chatBot;
-
-    // delete all edges
-    for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
-    {
-        delete *it;
-    }
 
     ////
     //// EOF STUDENT CODE
@@ -157,19 +152,20 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                             // passing in unique_ptr objects with guards to ensure no transfer of ownership
                             auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](const std::unique_ptr<GraphNode>& node) { return node->GetID() == std::stoi(childToken->second); });
 
-                            // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                            // create new edge as a unique pointer
+                            std::unique_ptr<GraphEdge> edge = std::make_unique<GraphEdge>(id);
                             // setting child/parent nodes using get() method to prevent making copy of unique pointers
                             edge->SetChildNode((*childNode).get());
                             edge->SetParentNode((*parentNode).get());
-                            _edges.push_back(edge);
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                            // pass in raw pointer address to parent node using get() method, give access not ownership
+                            (*childNode)->AddEdgeToParentNode(edge.get());
+                            // Use move semantics to transfer ownership of unique pointer to parent node
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge));
                         }
 
                         ////
@@ -202,7 +198,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         // search for nodes which have no incoming edges
         if ((*it)->GetNumberOfParents() == 0)
         {
-
             if (rootNode == nullptr)
             {
                 // assign current node to root using get() method to prevent making copy of unique pointer
